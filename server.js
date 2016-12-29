@@ -14,15 +14,15 @@ const app = express();
 app.use((req, res, next) => {
   const {statusCode} = res;
   const { ip, method, url } = req;
+  const ua = req.headers['user-agent'];
   const dateOptions = { year: 'numeric', month: 'short', day: '2-digit', 
                         hour: '2-digit', minute: '2-digit', second: '2-digit',
                         timeZoneName: 'short' };
   const now = new Date().toLocaleDateString('en-GB', dateOptions);
-  const ua = req.headers['user-agent'];
   
   fs.appendFile('server.log', `${ip} -- [${now}] ${method} ${url} ${statusCode} ${ua}\n`, (err) => {
     if (err) {
-      console.log('Sorry to append to server.log');
+      console.log('Sorry unable to append to server.log');
     }
   });
   next();
@@ -30,6 +30,8 @@ app.use((req, res, next) => {
 
 // If next is not called then we
 // will not move on beyond this point
+// It can be used to redirect all users
+// to a temporary page
 // app.use((req, res, next) => {
 //   res.render('maintenance.hbs');
 // });
